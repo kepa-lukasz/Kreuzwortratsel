@@ -82,7 +82,6 @@ const styles = {
         minWidth: '250px',
         overflowY: 'scroll',
         maxHeight: '80vh',
-        border: "1px solid red"
     },
     heading: {
         marginTop: 0,
