@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/kepa-lukasz/Kreuzwortratsel/static/css/main.e6c13ad2.css",
+    "main.js": "/kepa-lukasz/Kreuzwortratsel/static/js/main.c4806620.js",
+    "static/js/453.30992a2a.chunk.js": "/kepa-lukasz/Kreuzwortratsel/static/js/453.30992a2a.chunk.js",
+    "index.html": "/kepa-lukasz/Kreuzwortratsel/index.html",
+    "main.e6c13ad2.css.map": "/kepa-lukasz/Kreuzwortratsel/static/css/main.e6c13ad2.css.map",
+    "main.c4806620.js.map": "/kepa-lukasz/Kreuzwortratsel/static/js/main.c4806620.js.map",
+    "453.30992a2a.chunk.js.map": "/kepa-lukasz/Kreuzwortratsel/static/js/453.30992a2a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.c4806620.js"
+  ]
+}
