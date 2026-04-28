@@ -1,5 +1,6 @@
 // src/api.js
-const API_URL = 'http://localhost:8080';
+const API_URL = process.env.REACT_APP_API_URL
+console.log("process: " +process.env.REACT_APP_API_URL);
 
 export const login = async (username, password) => {
     // Spring Security domyślnie oczekuje danych formularza, a nie JSONa
@@ -69,7 +70,7 @@ export const fetchRanking = async () => {
     return response.json();
 };
 export const getRankingCrossword = async (difficulty = 'EASY') => {
-    const response = await fetch(`http://localhost:8080/ranking/GetCrossWords?difficulty=${difficulty}`, {
+    const response = await fetch(`${API_URL}/ranking/GetCrossWords?difficulty=${difficulty}`, {
         credentials: 'include'
     });
     if (response.status === 401) throw new Error('UNAUTHORIZED');
@@ -78,7 +79,7 @@ export const getRankingCrossword = async (difficulty = 'EASY') => {
 };
 
 export const finishRankingGame = async (gameId, hints, surrender = false) => {
-    const response = await fetch(`http://localhost:8080/ranking/FinishGame?surrender=${surrender}`, {
+    const response = await fetch(`${API_URL}/ranking/FinishGame?surrender=${surrender}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -92,7 +93,7 @@ export const finishRankingGame = async (gameId, hints, surrender = false) => {
     return response.json();
 };
 export const getMyHistory = async () => {
-    const response = await fetch('http://localhost:8080/ranking/MyHistory', {
+    const response = await fetch('${API_URL}/ranking/MyHistory', {
         method: 'GET',
         credentials: 'include',
     });
@@ -103,7 +104,7 @@ export const getMyHistory = async () => {
     return response.json();
 };
 export const updateUsername = async (newUsername) => {
-    const url = `http://localhost:8080/update-username?newUsername=${encodeURIComponent(newUsername)}`
+    const url = `${API_URL}/update-username?newUsername=${encodeURIComponent(newUsername)}`
     console.log(url);
     
     const response = await fetch(url, {
@@ -115,7 +116,7 @@ export const updateUsername = async (newUsername) => {
 };
 
 export const deleteAccount = async () => {
-    const response = await fetch('http://localhost:8080/delete-account', {
+    const response = await fetch(`${API_URL}/delete-account`, {
         method: 'DELETE',
         credentials: 'include'
     });
