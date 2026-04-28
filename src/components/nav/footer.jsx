@@ -1,45 +1,10 @@
-// src/App.js
-import React, { useState } from 'react';
-import { HashRouter, Routes, Route, useNavigate, Link } from 'react-router-dom';
-import MainCrossword from './components/learn/main';
-import ConfigScreen from './components/learn/config';
-import { LoginScreen } from './components/auth/login';
-import { Navbar } from './components/nav/nav';
-import { Footer } from './components/nav/footer';
-import { RegisterScreen } from './components/auth/register';
-import { RankingsScreen } from './components/ranked/list';
-import RankingConfigScreen from './components/ranked/RankedConfig';
-import RankingCrossword from './components/ranked/RankedCrossword';
-import RankingHistory from './components/main/RankedHistory';
-import SettingsScreen from './components/main/settings';
 
+export const Footer = () => (
+    <footer style={styles.footer}>
+        <p>&copy; {new Date().getFullYear()} Lern Deutsch - Ucz się przez zabawę.</p>
+    </footer>
+);
 
-
-export default function App() {
-    return (
-        <HashRouter>
-            <div style={styles.appLayout}>
-                <Navbar />
-                <main style={styles.mainContent}>
-                    <Routes>
-                        <Route path="/" element={<ConfigScreen />} />
-                        <Route path="/home" element={<ConfigScreen />} />
-                        <Route path="/login" element={<LoginScreen />} />
-                        <Route path="/register" element={<RegisterScreen />} />
-                        <Route path="/ranking" element={<RankingsScreen />} />
-                        <Route path="/ranked/game" element={<RankingCrossword />} />
-                        <Route path="/crossword" element={<MainCrossword />} />
-                        <Route path="/rankings" element={<RankingConfigScreen />} />
-                        <Route path="/rankings/hitstory" element={<RankingHistory />} />
-                        <Route path="/settings" element={<SettingsScreen />} />
-                        
-                    </Routes>
-                </main>
-                <Footer />
-            </div>
-        </HashRouter>
-    );
-}
 
 // --- STYLE ---
 

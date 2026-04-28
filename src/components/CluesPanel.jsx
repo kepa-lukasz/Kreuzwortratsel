@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 
-export default function CluesPanel({ words,  }) {
-    console.log(words);
-    
+export default function CluesPanel({ words, onHint }) {
     const [revealed, setRevealed] = useState({});
-
     // Resetujemy podpowiedzi, kiedy ładuje się nowa krzyżówka
     useEffect(() => {
         setRevealed({});
     }, [words]);
 
-    const handleReveal = (idx, maxLen) => {
+    const handleReveal = (pos, maxLen) => {
+        if (onHint) {
+        onHint();
+    }
         setRevealed(prev => {
-            const current = prev[idx] || 0;
+            const current = prev[pos] || 0;
             // Zwiększamy o 1 tylko, jeśli nie odkryliśmy jeszcze całego słowa
             if (current < maxLen) {
-                return { ...prev, [idx]: current + 1 };
+                return { ...prev, [pos]: current + 1 };
             }
             return prev;
         });
@@ -25,26 +25,30 @@ export default function CluesPanel({ words,  }) {
         <div style={styles.cluesContainer}>
             <h3 style={styles.heading}>Podpowiedzi:</h3>
             <ul style={styles.cluesList}>
-                {words.map((wordObj, idx) => {
-                    // Ponieważ w CrosswordView dodaliśmy pole "id", używamy go,
-                    // w przeciwnym razie ratujemy się indexem tablicy.
-                    const germanWord = wordObj.word || ""; 
-                    const revealedCount = revealed[idx] || 0;
+                {words.map((wordObj) => {
+                    // Dostosowanie do obiektu z Twojego API:
+                    // answer: "OHR", polish: "ucho", position: 1
+                    const germanWord = wordObj.answer || ""; 
+                    const clueText = wordObj.polish || "Brak tłumaczenia";
+                    const pos = wordObj.position;
+                    
+                    const revealedCount = revealed[pos] || 0;
                     
                     // Odkryta część słowa
-                    const revealedText = germanWord.substring(0, revealedCount);
-
+                    const revealedText = germanWord.substring(0, revealedCount).toUpperCase();
+                    // Ukryta część słowa (podkreślniki)
                     const hiddenText = germanWord.substring(revealedCount).replace(/./g, '_ ');
 
                     return (
-                        <li key={wordObj.clue} style={styles.clueItem}>
+                        <li key={pos} style={styles.clueItem}>
                             <div style={styles.clueHeader}>
                                 <span>
-                                    <strong>{idx}.</strong> {wordObj.clue}
+                                    {/* Używamy pozycji z backendu */}
+                                    <strong>{pos}.</strong> {clueText}
                                 </span>
                                 
                                 <button 
-                                    onClick={() => handleReveal(idx, germanWord.length)}
+                                    onClick={() => handleReveal(pos, germanWord.length)}
                                     disabled={revealedCount === germanWord.length}
                                     style={{
                                         ...styles.revealBtn,
@@ -76,16 +80,20 @@ export default function CluesPanel({ words,  }) {
 
 const styles = {
     cluesContainer: {
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#f8fafc', // Delikatnie jaśniejszy, nowoczesny kolor
         padding: '20px',
-        borderRadius: '8px',
-        minWidth: '250px',
-        overflowY: 'scroll',
-        maxHeight: '80vh',
+        borderRadius: '12px',
+
+        // overflowY: 'auto', // Dodajemy scroll, jeśli podpowiedzi jest dużo
+        boxShadow: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)'
     },
     heading: {
         marginTop: 0,
-        marginBottom: '15px'
+        marginBottom: '20px',
+        color: '#1e293b',
+        fontSize: '20px',
+        borderBottom: '2px solid #e2e8f0',
+        paddingBottom: '10px'
     },
     cluesList: {
         listStyleType: 'none',
@@ -93,38 +101,41 @@ const styles = {
         margin: 0
     },
     clueItem: {
-        marginBottom: '15px',
-        borderBottom: '1px solid #e2e8f0',
-        paddingBottom: '10px'
+        marginBottom: '18px',
+        borderBottom: '1px solid #f1f5f9',
+        paddingBottom: '12px'
     },
     clueHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '5px',
-        fontSize: '18px'
+        marginBottom: '8px',
+        fontSize: '16px',
+        color: '#334155'
     },
     revealBtn: {
         backgroundColor: '#3b82f6',
         color: 'white',
         border: 'none',
         borderRadius: '50%',
-        width: '24px',
-        height: '24px',
+        width: '26px',
+        height: '26px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         fontWeight: 'bold',
-        fontSize: '16px',
+        fontSize: '18px',
         lineHeight: '1',
-        paddingBottom: '2px'
+        transition: 'all 0.2s ease'
     },
     hintText: {
-        fontSize: '16px',
+        fontSize: '15px',
         fontFamily: 'monospace',
         backgroundColor: '#fff',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        border: '1px dashed #cbd5e1'
+        padding: '6px 10px',
+        borderRadius: '6px',
+        border: '1px dashed #cbd5e1',
+        display: 'inline-block',
+        minWidth: '100px'
     }
 };
