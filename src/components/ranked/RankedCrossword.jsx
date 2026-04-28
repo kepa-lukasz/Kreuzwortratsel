@@ -18,7 +18,6 @@ export default function RankingCrossword({onHint}) {
 
     const handleHintUsed = () => {
         setHintsUsed(prev => prev + 1);
-        console.log("Zużyto podpowiedź. Razem:", hintsUsed + 1);
     };
 
 

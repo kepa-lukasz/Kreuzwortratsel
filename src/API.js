@@ -1,6 +1,5 @@
 // src/api.js
 const API_URL = process.env.REACT_APP_API_URL
-console.log("process: " +process.env.REACT_APP_API_URL);
 
 export const login = async (username, password) => {
     // Spring Security domyślnie oczekuje danych formularza, a nie JSONa
@@ -8,7 +7,6 @@ export const login = async (username, password) => {
     formData.append('username', username);
     formData.append('password', password);
 
-    console.log(formData.toString());
     const response = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: {
@@ -88,7 +86,7 @@ export const finishRankingGame = async (gameId, hints, surrender = false) => {
         }),
         credentials: 'include'
     });
-    console.log(response);
+
     
     return response.json();
 };
@@ -105,7 +103,7 @@ export const getMyHistory = async () => {
 };
 export const updateUsername = async (newUsername) => {
     const url = `${API_URL}/update-username?newUsername=${encodeURIComponent(newUsername)}`
-    console.log(url);
+  
     
     const response = await fetch(url, {
         method: 'PUT',

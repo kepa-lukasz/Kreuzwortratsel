@@ -13,7 +13,7 @@ export const fetchCrossword = async (count, seed, difficulty) => {
         params.append('difficulty', difficulty);
     }
     // 2. Wykonujemy zapytanie
-    const url = `http://localhost:8080/GetCrossWords?${params.toString()}`
+    const url = `${process.env.REACT_APP_API_URL}/GetCrossWords?${params.toString()}`
     
     
     const response = await fetch(url);

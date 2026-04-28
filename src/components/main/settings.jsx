@@ -52,7 +52,6 @@ export default function SettingsScreen() {
             }
         });
     };
-    console.log("user");
 
     if (!user) return null;
 

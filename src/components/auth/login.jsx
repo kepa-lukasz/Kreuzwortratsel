@@ -17,15 +17,11 @@ export const LoginScreen = () => {
     const handleLogin = async (e) => {
         e.preventDefault(); // Zatrzymuje domyślne przeładowanie strony formularza
         setError('');
-        console.log("Rozpoczynam próbę logowania do API...");
 
         try {
-            // 2. To jest wywołanie Twojego API (strzela pod /api/login)
-            console.log(username, password);
+
 
             await login(username, password);
-
-            console.log("Sukces! Dane poprawne, zaraz nastąpi przekierowanie.");
 
 
             window.location.replace('/home');
