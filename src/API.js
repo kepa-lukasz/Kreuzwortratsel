@@ -91,7 +91,7 @@ export const finishRankingGame = async (gameId, hints, surrender = false) => {
     return response.json();
 };
 export const getMyHistory = async () => {
-    const response = await fetch('${API_URL}/ranking/MyHistory', {
+    const response = await fetch(`${API_URL}/ranking/MyHistory`, {
         method: 'GET',
         credentials: 'include',
     });
