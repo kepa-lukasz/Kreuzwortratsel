@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchCurrentUser } from '../../API'
 export default function ConfigScreen() {
     const [inputCount, setInputCount] = useState('10');
     const [inputSeed, setInputSeed] = useState('');
     const [inputDifficulty, setInputDifficulty] = useState('EASY');
     const navigate = useNavigate();
-
+    useEffect(() => {
+        fetchCurrentUser().then(user => {
+            if (user.logged && !user.profileComplete) {
+                navigate('/choose-username');
+            }
+        });
+    }, []);
     const handleSubmit = (e) => {
         e.preventDefault();
         const params = new URLSearchParams({

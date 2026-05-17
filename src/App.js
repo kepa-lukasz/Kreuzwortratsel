@@ -12,6 +12,8 @@ import RankingConfigScreen from './components/ranked/RankedConfig';
 import RankingCrossword from './components/ranked/RankedCrossword';
 import RankingHistory from './components/main/RankedHistory';
 import SettingsScreen from './components/main/settings';
+import { ChooseUsernameScreen } from './components/auth/ChooseUsernameScreen';
+
 
 
 
@@ -22,6 +24,8 @@ export default function App() {
                 <Navbar />
                 <main style={styles.mainContent}>
                     <Routes>
+
+                        <Route path="/choose-username" element={<ChooseUsernameScreen />} />
                         <Route path="/" element={<ConfigScreen />} />
                         <Route path="/home" element={<ConfigScreen />} />
                         <Route path="/login" element={<LoginScreen />} />
@@ -32,7 +36,7 @@ export default function App() {
                         <Route path="/rankings" element={<RankingConfigScreen />} />
                         <Route path="/rankings/hitstory" element={<RankingHistory />} />
                         <Route path="/settings" element={<SettingsScreen />} />
-                        
+
                     </Routes>
                 </main>
                 <Footer />

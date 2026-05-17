@@ -68,7 +68,7 @@ export const fetchRanking = async () => {
     return response.json();
 };
 export const getRankingCrossword = async (difficulty = 'EASY') => {
-    const response = await fetch(`${API_URL}/ranking/GetCrossWords?difficulty=${difficulty}`, {
+    const response = await fetch(`${API_URL}/ranking/GetCross   Words?difficulty=${difficulty}`, {
         credentials: 'include'
     });
     if (response.status === 401) throw new Error('UNAUTHORIZED');
@@ -102,9 +102,7 @@ export const getMyHistory = async () => {
     return response.json();
 };
 export const updateUsername = async (newUsername) => {
-    const url = `${API_URL}/update-username?newUsername=${encodeURIComponent(newUsername)}`
-  
-    
+    const url = `${API_URL}/update-username?newUsername=${encodeURIComponent(newUsername)}`   
     const response = await fetch(url, {
         method: 'PUT',
         credentials: 'include'
@@ -120,4 +118,16 @@ export const deleteAccount = async () => {
     });
     if (!response.ok) throw new Error('Błąd podczas usuwania konta');
     return response.json();
+};
+export const setUsername = async (username) => {
+    const response = await fetch(`${API_URL}/api/user/set-username`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ username }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Coś poszło nie tak.');
+    return data;
 };
