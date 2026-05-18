@@ -91,11 +91,12 @@ export const finishRankingGame = async (gameId, hints, surrender = false) => {
     return response.json();
 };
 export const getMyHistory = async () => {
-    const response = await fetch(`${API_URL}/ranking/MyHistory`, {
+    const response = await fetch(`${API_URL}/api/games/history`, {
         method: 'GET',
         credentials: 'include',
     });
-
+    
+    
     if (response.status === 401) throw new Error('UNAUTHORIZED');
     if (!response.ok) throw new Error('Błąd podczas pobierania historii');
     
@@ -130,4 +131,34 @@ export const setUsername = async (username) => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || 'Coś poszło nie tak.');
     return data;
+};
+
+export const fetchCrossword = async (count, seed, difficulty) => {
+    console.log(count);
+    
+    const params = new URLSearchParams({ count, difficulty });
+    if (seed) params.set('seed', seed);
+
+    const response = await fetch(`${API_URL}/GetCrossWords?${params}`, {
+        credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Błąd pobierania krzyżówki');
+
+    const data = await response.json();
+    // Backend zwraca { gameId, words } – destructurujemy dla pewności
+    console.log(data);
+    
+    return {
+        gameId: data.gameId,
+        words:  data.words
+    };
+};
+
+export const finishGame = async (gameId) => {
+    const response = await fetch(`${API_URL}/api/games/${gameId}/finish`, {
+        method: 'POST',
+        credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Błąd podczas zapisywania wyniku');
+    return response.json();
 };

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyHistory } from '../../API';
-import { FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt, FaPlay, FaCheckCircle, FaFlag } from "react-icons/fa";
+import { LuGrid2X2Check, LuTextSearch, LuLayers, LuBookText } from "react-icons/lu";
 
 export default function RankingHistory() {
     const [history, setHistory] = useState([]);
@@ -25,85 +26,166 @@ export default function RankingHistory() {
             });
     }, [navigate]);
 
-    if (loading) return <div style={styles.loader}>Wczytywanie Twoich sukcesów... ⏳</div>;
-
-
     const renderStatus = (game) => {
-    // 1. Jeśli gra nie jest zakończona
-    if (!game.isFinished) {
+        if (!game.finished) {
+            return (
+                <span style={styles.statusBadge('#64748b', '#f1f5f9')}>
+                    <FaSignOutAlt size={11} /> Porzucona
+                </span>
+            );
+        }
+        if (game.points === 0) {
+            return (
+                <span style={styles.statusBadge('#dc2626', '#fef2f2')}>
+                    <FaFlag size={11} /> Poddanie
+                </span>
+            );
+        }
         return (
-            <span style={{ color: '#64748b', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <FaSignOutAlt color="#64748b"/> Porzucona
+            <span style={styles.statusBadge('#059669', '#ecfdf5')}>
+                <FaCheckCircle size={11} /> Sukces
             </span>
         );
-    }
-    
-    // 2. Jeśli jest zakończona, ale punkty to 0 (Poddanie)
-    if (game.finalPoints === 0) {
-        return (
-            <span style={{ color: '#ef4444', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                🏳️ Poddanie
-            </span>
-        );
-    }
+    };
 
-    // 3. Jeśli jest zakończona i punkty > 0 (Sukces)
-    return (
-        <span style={{ color: '#10b981', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            ✅ Sukces
-        </span>
+    const difficultyConfig = {
+        HARD: { bg: '#fee2e2', color: '#991b1b', label: '🔴 Trudny' },
+        MEDIUM: { bg: '#fef3c7', color: '#92400e', label: '🟡 Średni' },
+        EASY: { bg: '#dcfce7', color: '#166534', label: '🟢 Łatwy' },
+    };
+
+const modeLabel = (mode) => {
+        const config = {
+            CROSSWORD: { label: 'Krzyżówki', icon: <LuGrid2X2Check size={16} /> },
+            WORD_SEARCH: { label: 'Wykreślanki', icon: <LuTextSearch size={16} /> },
+            FLASHCARDS: { label: 'Fiszki', icon: <LuLayers size={16} /> },
+            STORIES: { label: 'Historie', icon: <LuBookText size={16} /> },
+        };
+
+        const currentMode = config[mode];
+
+        // Fallback w razie nieznanego trybu
+        if (!currentMode) return <span>{mode}</span>;
+
+        return (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                {currentMode.icon}
+                {currentMode.label}
+            </span>
+        );
+    };
+
+    if (loading) return (
+        <div style={styles.pageWrapper}>
+            <div style={styles.loaderCard}>
+                <div style={styles.spinner} />
+                <p style={{ color: '#64748b', marginTop: '16px' }}>Wczytywanie historii...</p>
+            </div>
+            {/* Zostawiamy mały tag na animację loadera, bo inline styles nie ogarną @keyframes */}
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
     );
-};
+
+    if (error) return (
+        <div style={styles.pageWrapper}>
+            <div style={styles.loaderCard}>
+                <p style={{ color: '#dc2626' }}>{error}</p>
+                <button style={styles.backBtn} onClick={() => navigate('/')}>Wróć</button>
+            </div>
+        </div>
+    );
 
     return (
         <div style={styles.pageWrapper}>
             <div style={styles.card}>
+                {/* Header */}
                 <div style={styles.header}>
-                    <h1 style={styles.title}>Moja Historia Rankingowa 🏆</h1>
-                    <button style={styles.backBtn} onClick={() => navigate('/')}>Wróć</button>
-                </div>
-
-                {history.length === 0 ? (
-                    <p style={styles.emptyText}>Nie rozegrałeś jeszcze żadnej gry rankingowej. Czas to zmienić! 🚀</p>
-                ) : (
-                    <div style={styles.list}>
-                        {history.map(game => (
-                            <div key={game.id} style={styles.historyRow}>
-                                {/* Oneliner: Data */}
-                                <div style={styles.oneliner}>
-                                    <span style={styles.icon}>📅</span>
-                                    <span style={styles.dateText}>
-                                        {new Date(game.date).toLocaleDateString()} {new Date(game.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                    </span>
-                                </div>
-
-                                {/* Trudność */}
-                                <div style={styles.badge(game.difficulty)}>
-                                    {game.difficulty}
-                                </div>
-
-                                {/* Oneliner: Punkty */}
-                                <div style={styles.oneliner}>
-                                    <span style={styles.icon}>🎯</span>
-                                    <span style={styles.pointsText}>
-                                        <b>{game.finalPoints}</b> / {game.potentialPoints} pkt
-                                    </span>
-                                </div>
-
-                                {/* Oneliner: Podpowiedzi */}
-                                <div style={styles.oneliner}>
-                                    <span style={styles.icon}>💡</span>
-                                    <span>{game.hints || 0}</span>
-                                </div>
-
-                                {/* Status */}
-                                <div style={styles.oneliner}>
-                                    {renderStatus(game)}
-                                </div>
-                            </div>
-                        ))}
+                    <div >
+                        <h1 style={styles.title}>Historia gier 🏆</h1>
+                        <p style={styles.subtitle}>{history.length} {history.length === 1 ? 'rozgrywka' : 'rozgrywek'}</p>
                     </div>
-                )}
+                    {/* <button style={styles.backBtn} onClick={() => navigate('/')}>← Wróć</button> */}
+                </div>
+                <div>
+
+                    {/* Cards Grid */}
+                    {history.length === 0 ? (
+                        <div style={styles.emptyState}>
+                            <div style={styles.emptyIcon}>🎮</div>
+                            <p style={styles.emptyTitle}>Brak rozgrywek</p>
+                            <p style={styles.emptySubtitle}>Nie rozegrałeś jeszcze żadnej gry. Czas to zmienić!</p>
+                            <button style={styles.playBtn} onClick={() => navigate('/create-game')}>
+                                Zacznij grę
+                            </button>
+                        </div>
+                    ) : (
+                        <div style={styles.historyGrid}>
+                            {history.map((game) => {
+                                const diff = difficultyConfig[game.difficulty] || difficultyConfig.EASY;
+                                return (
+                                    <div key={game.id} style={styles.gameCard}>
+
+                                        {/* Card Header (Data + Status) */}
+                                        <div style={styles.cardTop}>
+                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                <span style={styles.dateMain}>
+                                                    {new Date(game.createdAt).toLocaleDateString('pl-PL', { day: '2-digit', month: 'long', year: 'numeric' })}
+                                                </span>
+                                                <span style={styles.dateTime}>
+                                                    {new Date(game.createdAt).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                {renderStatus(game)}
+                                            </div>
+                                        </div>
+
+                                        {/* Card Body (Parametry gry) */}
+                                        <div style={styles.cardBody}>
+                                            <div style={styles.infoItem}>
+                                                <span style={styles.infoLabel}>Tryb</span>
+                                                {modeLabel(game.mode)}
+                                            </div>
+                                            <div style={styles.infoItem}>
+                                                <span style={styles.infoLabel}>Trudność</span>
+                                                <span style={{
+                                                    padding: '2px 8px',
+                                                    borderRadius: '12px',
+                                                    fontSize: '11px',
+                                                    fontWeight: '700',
+                                                    backgroundColor: diff.bg,
+                                                    color: diff.color,
+                                                    display: 'inline-block'
+                                                }}>
+                                                    {diff.label}
+                                                </span>
+                                            </div>
+                                            <div style={styles.infoItem}>
+                                                <span style={styles.infoLabel}>Maksymalna Liczba pytań</span>
+                                                <span style={styles.infoValue}>{game.count}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Card Footer (Punkty + Akcja) */}
+                                        <div style={styles.cardFooter}>
+                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                <span style={styles.infoLabel}>Zdobyte punkty</span>
+                                                <span style={styles.pointsText}>{game.points} <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>pkt</span></span>
+                                            </div>
+                                            <button
+                                                style={styles.replayBtn}
+                                                onClick={() => navigate(`/crossword?count=${game.count}&difficulty=${game.difficulty}&seed=${game.seed}`)}
+                                                title="Zagraj ponownie z tymi samymi ustawieniami"
+                                            >
+                                                <FaPlay size={10} /> Graj
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -111,58 +193,159 @@ export default function RankingHistory() {
 
 const styles = {
     pageWrapper: {
-        minHeight: '30vh',
+        minHeight: '100vh',
         background: 'linear-gradient(135deg, #a4a5ff 0%, #8cb8ff 100%)',
         display: 'flex',
         justifyContent: 'center',
         padding: '40px 20px',
-        fontFamily: 'Segoe UI, sans-serif'
+        fontFamily: "'Segoe UI', sans-serif",
+        boxSizing: 'border-box',
     },
     card: {
         backgroundColor: 'white',
         borderRadius: '20px',
         padding: '30px',
         width: '100%',
-        maxWidth: '900px',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+        width: '80vw',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+        alignSelf: 'flex-start',
+    },
+    loaderCard: {
+        backgroundColor: 'white',
+        borderRadius: '20px',
+        padding: '60px 40px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+    },
+    spinner: {
+        width: '36px',
+        height: '36px',
+        border: '3px solid #e2e8f0',
+        borderTop: '3px solid #8cb8ff',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite',
     },
     header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '25px',
-        borderBottom: '2px solid #f1f5f9',
-        paddingBottom: '15px'
+        paddingBottom: '20px',
     },
-    title: { fontSize: '24px', color: '#1e293b', margin: 0 },
-    backBtn: { padding: '8px 15px', borderRadius: '8px', border: 'none', cursor: 'pointer', backgroundColor: '#e2e8f0' },
-    list: { display: 'flex', flexDirection: 'column', gap: '12px' },
-    historyRow: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '15px',
-        backgroundColor: '#f8fafc',
-        borderRadius: '12px',
-        transition: 'transform 0.2s',
+    title: { fontSize: '24px', color: '#1e293b', margin: 0, fontWeight: '800', textAlign: "center", width: "100%" },
+    subtitle: { fontSize: '14px', color: '#94a3b8', margin: '4px 0 0 0', textAlign: "center", width: "100%" },
+    backBtn: {
+        padding: '8px 16px',
+        borderRadius: '10px',
+        border: 'none',
+        cursor: 'pointer',
+        backgroundColor: '#f1f5f9',
+        color: '#475569',
+        fontWeight: '600',
+        fontSize: '13px',
+        transition: 'background 0.15s',
+    },
+    // ---- NOWE STYLE DLA SIATKI I KART ----
+    historyGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+        gap: '20px',
+        paddingTop: '10px',
+    },
+    gameCard: {
+        backgroundColor: '#ffffff',
         border: '1px solid #e2e8f0',
-        flexWrap: 'wrap',
-        gap: '10px'
+        borderRadius: '16px',
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
     },
-    oneliner: { display: 'flex', alignItems: 'center', gap: '8px', minWidth: '120px' },
-    icon: { fontSize: '18px' },
-    dateText: { fontSize: '14px', color: '#64748b' },
-    pointsText: { fontSize: '15px' },
-    badge: (diff) => ({
-        padding: '4px 10px',
-        borderRadius: '6px',
+    cardTop: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        borderBottom: '1px solid #f1f5f9',
+        paddingBottom: '12px',
+    },
+    cardBody: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '12px',
+    },
+    infoItem: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
+    },
+    infoLabel: {
+        fontSize: '11px',
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em',
+        color: '#94a3b8',
+        fontWeight: '700',
+    },
+    infoValue: {
+        fontSize: '13px',
+        color: '#334155',
+        fontWeight: '600',
+    },
+    cardFooter: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 'auto',
+        paddingTop: '16px',
+        borderTop: '1px dashed #e2e8f0',
+    },
+    // --------------------------------------
+    dateMain: { fontSize: '14px', color: '#0f172a', fontWeight: '700' },
+    dateTime: { fontSize: '12px', color: '#64748b', marginTop: '2px' },
+    pointsText: { fontSize: '22px', color: '#6366f1', fontWeight: '800', lineHeight: '1' },
+    statusBadge: (color, bg) => ({
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '4px 12px',
+        borderRadius: '20px',
         fontSize: '12px',
-        fontWeight: 'bold',
-        backgroundColor: diff === 'HARD' ? '#fee2e2' : diff === 'MEDIUM' ? '#fef3c7' : '#dcfce7',
-        color: diff === 'HARD' ? '#991b1b' : diff === 'MEDIUM' ? '#92400e' : '#166534',
-        minWidth: '70px',
-        textAlign: 'center'
+        fontWeight: '700',
+        color,
+        backgroundColor: bg,
+        whiteSpace: 'nowrap',
     }),
-    loader: { textAlign: 'center', marginTop: '100px', fontSize: '20px' },
-    emptyText: { textAlign: 'center', padding: '40px', color: '#64748b' }
+    replayBtn: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '10px 16px',
+        borderRadius: '10px',
+        border: 'none',
+        cursor: 'pointer',
+        backgroundColor: '#6366f1',
+        color: 'white',
+        fontSize: '13px',
+        fontWeight: '700',
+        boxShadow: '0 4px 10px rgba(99, 102, 241, 0.3)',
+    },
+    playBtn: {
+        marginTop: '16px',
+        padding: '12px 24px',
+        borderRadius: '10px',
+        border: 'none',
+        cursor: 'pointer',
+        backgroundColor: '#6366f1',
+        color: 'white',
+        fontSize: '15px',
+        fontWeight: '700',
+        boxShadow: '0 4px 10px rgba(99, 102, 241, 0.3)',
+    },
+    emptyState: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '60px 20px',
+    },
+    emptyIcon: { fontSize: '48px', marginBottom: '16px' },
+    emptyTitle: { fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: '0 0 8px' },
+    emptySubtitle: { fontSize: '15px', color: '#64748b', margin: 0 },
 };

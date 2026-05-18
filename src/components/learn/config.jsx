@@ -40,13 +40,13 @@ export default function ConfigScreen() {
                         </select>
                     </div>
                     <div style={styles.inputGroup}>
-                        <label style={styles.label}>Ilość słów (1-30):</label>
+                        <label style={styles.label}>Maksymalna ilość słów (1-30):</label>
                         <input type="number" min="1" max="30" value={inputCount} onChange={(e) => setInputCount(e.target.value)} style={styles.input} />
                     </div>
-                    <div style={styles.inputGroup}>
+                    {/* <div style={styles.inputGroup}>
                         <label style={styles.label}>Ziarno (Seed):</label>
                         <input type="text" placeholder="Opcjonalny kod..." value={inputSeed} onChange={(e) => setInputSeed(e.target.value)} style={styles.input} />
-                    </div>
+                    </div> */}
                     <button type="submit" style={styles.button}>Zacznij naukę 🚀</button>
                 </form>
             </div>

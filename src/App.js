@@ -31,10 +31,9 @@ export default function App() {
                         <Route path="/login" element={<LoginScreen />} />
                         <Route path="/register" element={<RegisterScreen />} />
                         <Route path="/ranking" element={<RankingsScreen />} />
-                        <Route path="/ranked/game" element={<RankingCrossword />} />
+                        
                         <Route path="/crossword" element={<MainCrossword />} />
-                        <Route path="/rankings" element={<RankingConfigScreen />} />
-                        <Route path="/rankings/hitstory" element={<RankingHistory />} />
+                        <Route path="/history" element={<RankingHistory />} />
                         <Route path="/settings" element={<SettingsScreen />} />
 
                     </Routes>
