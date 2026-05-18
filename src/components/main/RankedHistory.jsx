@@ -114,7 +114,7 @@ const modeLabel = (mode) => {
                             <div style={styles.emptyIcon}>🎮</div>
                             <p style={styles.emptyTitle}>Brak rozgrywek</p>
                             <p style={styles.emptySubtitle}>Nie rozegrałeś jeszcze żadnej gry. Czas to zmienić!</p>
-                            <button style={styles.playBtn} onClick={() => navigate('/create-game')}>
+                            <button style={styles.playBtn} onClick={() => navigate('/')}>
                                 Zacznij grę
                             </button>
                         </div>
